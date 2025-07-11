@@ -175,6 +175,24 @@ export default function RestaurantsScreen({ navigation, route }) {
       })
     }
   }
+
+  // 4. Crear función: updateRestaurant
+  const updateRestaurant = async (values) => {
+    setBackendErrors([])
+    try {
+      const updatedRestaurant = await update(restaurant.id, values)
+      showMessage({
+        message: `Restaurant ${updatedRestaurant.name} succesfully updated`,
+        type: 'success',
+        style: GlobalStyles.flashStyle,
+        titleStyle: GlobalStyles.flashTextStyle
+      })
+      navigation.navigate('RestaurantsScreen', { dirty: true })
+    } catch (error) {
+      console.log(error)
+      setBackendErrors(error.errors)
+    }
+  }
   return (
     <>
       <DeleteModal // 3. Añadir el componente DeleteModel: pide confirmación al usuario antes de eliminar el restaurante
