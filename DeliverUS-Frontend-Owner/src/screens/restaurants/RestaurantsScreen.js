@@ -130,7 +130,29 @@ export default function RestaurantsScreen({ navigation, route }) {
       })
     }
   }
-
+  // 4. Crear función: removeRestaurant
+  const removeRestaurant = async (restaurant) => {
+    try {
+      await remove(restaurant.id)
+      await fetchRestaurants()
+      setRestaurantToBeDeleted(null)
+      showMessage({
+        message: `Restaurant ${restaurant.name} succesfully removed`,
+        type: 'success',
+        style: GlobalStyles.flashStyle,
+        titleStyle: GlobalStyles.flashTextStyle
+      })
+    } catch (error) {
+      console.log(error)
+      setRestaurantToBeDeleted(null)
+      showMessage({
+        message: `Restaurant ${restaurant.name} could not be removed.`,
+        type: 'error',
+        style: GlobalStyles.flashStyle,
+        titleStyle: GlobalStyles.flashTextStyle
+      })
+    }
+  }
   return (
     <>
       <DeleteModal // 3. Añadir el componente DeleteModel: pide confirmación al usuario antes de eliminar el restaurante
