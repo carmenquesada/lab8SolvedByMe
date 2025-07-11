@@ -20,7 +20,28 @@ export default function RestaurantsScreen({ navigation, route }) {
   const { loggedInUser } = useContext(AuthorizationContext)
   // 1. Estado para almacenar el restaurante que sería eliminado si se pulsa el botón 'eliminar':
   const [restaurantToBeDeleted, setRestaurantToBeDeleted] = useState(null)
-
+  // 2. Estado para editar el restaurante: guarda los valores que va a usar Formik como initialValues
+  const [initialRestaurantValues, setInitialRestaurantValues] = useState({ name: null, description: null, address: null, postalCode: null, url: null, shippingCosts: null, email: null, phone: null, restaurantCategoryId: null, logo: null, heroImage: null })
+  // 3. useEffect para cargar los datos:
+  useEffect(() => {
+    async function fetchRestaurantDetail () {
+      try {
+        const fetchedRestaurant = await getDetail(route.params.id) // llama a getDetail para traer los datos
+        const preparedRestaurant = prepareEntityImages(fetchedRestaurant, ['logo', 'heroImage']) // Adaptar los datos de imagen
+        setRestaurant(preparedRestaurant) // Guardar restaurante en el estado
+        const initialValues = buildInitialValues(preparedRestaurant, initialRestaurantValues) // Crea valores iniciales para el formulario
+        setInitialRestaurantValues(initialValues) // Set los initial values en Formik
+      } catch (error) { // Manejo de errores
+        showMessage({
+          message: `There was an error while retrieving restaurant details (id ${route.params.id}). ${error}`,
+          type: 'error',
+          style: GlobalStyles.flashStyle,
+          titleStyle: GlobalStyles.flashTextStyle
+        })
+      }
+    }
+    fetchRestaurantDetail()
+  }, [route])
   useEffect(() => {
     if (loggedInUser) {
       fetchRestaurants()
@@ -45,7 +66,8 @@ export default function RestaurantsScreen({ navigation, route }) {
         <TextSemiBold>Shipping: <TextSemiBold textStyle={{ color: GlobalStyles.brandPrimary }}>{item.shippingCosts.toFixed(2)}€</TextSemiBold></TextSemiBold>
         <View style={styles.actionButtonsContainer}>
           <Pressable // 2. Añadir pressable para Edit y Delete
-  onPress={() => console.log(`Edit pressed for restaurantId = ${item.id}`)}
+  // 1. Reemplazar en el onPress: al pulsar edit se navega a EditRestaurantScreen, enviando el id del Restaurante a editar
+  onPress={() => navigation.navigate('EditRestaurantScreen', { id: item.id })}
   style={({ pressed }) => [
     {
       backgroundColor: pressed
