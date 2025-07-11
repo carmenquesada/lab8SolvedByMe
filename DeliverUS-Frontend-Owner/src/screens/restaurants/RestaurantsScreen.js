@@ -6,7 +6,7 @@ import { getAll, remove } from '../../api/RestaurantEndpoints'
 import ImageCard from '../../components/ImageCard'
 import TextSemiBold from '../../components/TextSemibold'
 import TextRegular from '../../components/TextRegular'
-import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { MaterialCommunityIcons } from '@expo/vector-icons' // 1. Importar esto
 import * as GlobalStyles from '../../styles/GlobalStyles'
 import { AuthorizationContext } from '../../context/AuthorizationContext'
 import { showMessage } from 'react-native-flash-message'
@@ -14,6 +14,7 @@ import DeleteModal from '../../components/DeleteModal'
 import restaurantLogo from '../../../assets/restaurantLogo.jpeg'
 import { API_BASE_URL } from '@env'
 
+// Action buttons for editing and removing restaurants:
 export default function RestaurantsScreen({ navigation, route }) {
   const [restaurants, setRestaurants] = useState([])
   const { loggedInUser } = useContext(AuthorizationContext)
@@ -41,7 +42,40 @@ export default function RestaurantsScreen({ navigation, route }) {
         }
         <TextSemiBold>Shipping: <TextSemiBold textStyle={{ color: GlobalStyles.brandPrimary }}>{item.shippingCosts.toFixed(2)}€</TextSemiBold></TextSemiBold>
         <View style={styles.actionButtonsContainer}>
-          {/* Include pressable elements for edit and remove this line including brackets */}
+          <Pressable // 2. Añadir pressable para Edit y Delete
+  onPress={() => console.log(`Edit pressed for restaurantId = ${item.id}`)}
+  style={({ pressed }) => [
+    {
+      backgroundColor: pressed
+        ? GlobalStyles.brandBlueTap
+        : GlobalStyles.brandBlue
+    },
+    styles.actionButton
+  ]}>
+  <View style={[{ flex: 1, flexDirection: 'row', justifyContent: 'center' }]}>
+    <MaterialCommunityIcons name='pencil' color={'white'} size={20}/>
+    <TextRegular textStyle={styles.text}>
+      Edit
+    </TextRegular>
+  </View>
+</Pressable>
+<Pressable
+  onPress={() => console.log(`Delete pressed for restaurantId = ${item.id}`)}
+  style={({ pressed }) => [
+    {
+      backgroundColor: pressed
+        ? GlobalStyles.brandPrimaryTap
+        : GlobalStyles.brandPrimary
+    },
+    styles.actionButton
+  ]}>
+  <View style={[{ flex: 1, flexDirection: 'row', justifyContent: 'center' }]}>
+    <MaterialCommunityIcons name='delete' color={'white'} size={20}/>
+    <TextRegular textStyle={styles.text}>
+      Delete
+    </TextRegular>
+  </View>
+</Pressable>
         </View>
       </ImageCard>
     )
