@@ -18,6 +18,8 @@ import { API_BASE_URL } from '@env'
 export default function RestaurantsScreen({ navigation, route }) {
   const [restaurants, setRestaurants] = useState([])
   const { loggedInUser } = useContext(AuthorizationContext)
+  // 1. Estado para almacenar el restaurante que sería eliminado si se pulsa el botón 'eliminar':
+  const [restaurantToBeDeleted, setRestaurantToBeDeleted] = useState(null)
 
   useEffect(() => {
     if (loggedInUser) {
@@ -59,8 +61,8 @@ export default function RestaurantsScreen({ navigation, route }) {
     </TextRegular>
   </View>
 </Pressable>
-<Pressable
-  onPress={() => console.log(`Delete pressed for restaurantId = ${item.id}`)}
+<Pressable // 2. Reemplazar en el onPress para que cuando se pulse el estado restaurantToBeDeleted se active:
+  onPress={() => setRestaurantToBeDeleted(item)}
   style={({ pressed }) => [
     {
       backgroundColor: pressed
