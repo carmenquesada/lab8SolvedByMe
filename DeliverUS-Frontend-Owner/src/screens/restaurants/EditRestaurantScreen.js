@@ -147,7 +147,9 @@ export default function EditRestaurantScreen({ navigation, route }) {
     <Formik
       enableReinitialize
       validationSchema={validationSchema}
-    // include the formik properties here
+    // 5. Propiedades del Formik:
+      initialValues={initialRestaurantValues}
+      onSubmit={updateRestaurant}
     >
       {({ handleSubmit, setFieldValue, values }) => (
         <ScrollView>
