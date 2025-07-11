@@ -133,6 +133,13 @@ export default function RestaurantsScreen({ navigation, route }) {
 
   return (
     <>
+      <DeleteModal // 3. Añadir el componente DeleteModel: pide confirmación al usuario antes de eliminar el restaurante
+        isVisible={restaurantToBeDeleted !== null} // solo cuando hay un restaurante pendiente de borrar
+        onCancel={() => setRestaurantToBeDeleted(null)} // si se pulsa cancelar, no se borra. Si se pulsa confirmar, se borra
+        onConfirm={() => removeRestaurant(restaurantToBeDeleted)}>  
+        <TextRegular>The products of this restaurant will be deleted as well</TextRegular>
+        <TextRegular>If the restaurant has orders, it cannot be deleted.</TextRegular>
+      </DeleteModal>
       <FlatList
         style={styles.container}
         data={restaurants}
