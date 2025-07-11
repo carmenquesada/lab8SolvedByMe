@@ -20,9 +20,8 @@ export default function EditRestaurantScreen({ navigation, route }) {
   const [open, setOpen] = useState(false)
   const [restaurantCategories, setRestaurantCategories] = useState([])
   const [backendErrors, setBackendErrors] = useState()
-  // 1. Estado para almacenar el restaurante que sería eliminado si se pulsa el botón 'eliminar':
-  const [restaurantToBeDeleted, setRestaurantToBeDeleted] = useState(null)
   // 2. Estado para editar el restaurante: guarda los valores que va a usar Formik como initialValues
+  const [restaurants, setRestaurants] = useState([])
   const [initialRestaurantValues, setInitialRestaurantValues] = useState({ name: null, description: null, address: null, postalCode: null, url: null, shippingCosts: null, email: null, phone: null, restaurantCategoryId: null, logo: null, heroImage: null })
   // 3. useEffect para cargar los datos:
   useEffect(() => {

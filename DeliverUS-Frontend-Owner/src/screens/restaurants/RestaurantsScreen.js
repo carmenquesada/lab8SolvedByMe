@@ -15,10 +15,11 @@ import restaurantLogo from '../../../assets/restaurantLogo.jpeg'
 import { API_BASE_URL } from '@env'
 
 // Action buttons for editing and removing restaurants:
-export default function RestaurantsScreen({ navigation, route }) {
+export default function RestaurantsScreen ({ navigation, route }) {
   const [restaurants, setRestaurants] = useState([])
   const { loggedInUser } = useContext(AuthorizationContext)
-
+  // 1. Estado para almacenar el restaurante que sería eliminado si se pulsa el botón 'eliminar':
+  const [restaurantToBeDeleted, setRestaurantToBeDeleted] = useState(null)
   useEffect(() => {
     if (loggedInUser) {
       fetchRestaurants()
