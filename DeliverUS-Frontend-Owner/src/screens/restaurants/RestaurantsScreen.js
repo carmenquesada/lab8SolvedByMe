@@ -18,30 +18,7 @@ import { API_BASE_URL } from '@env'
 export default function RestaurantsScreen({ navigation, route }) {
   const [restaurants, setRestaurants] = useState([])
   const { loggedInUser } = useContext(AuthorizationContext)
-  // 1. Estado para almacenar el restaurante que sería eliminado si se pulsa el botón 'eliminar':
-  const [restaurantToBeDeleted, setRestaurantToBeDeleted] = useState(null)
-  // 2. Estado para editar el restaurante: guarda los valores que va a usar Formik como initialValues
-  const [initialRestaurantValues, setInitialRestaurantValues] = useState({ name: null, description: null, address: null, postalCode: null, url: null, shippingCosts: null, email: null, phone: null, restaurantCategoryId: null, logo: null, heroImage: null })
-  // 3. useEffect para cargar los datos:
-  useEffect(() => {
-    async function fetchRestaurantDetail () {
-      try {
-        const fetchedRestaurant = await getDetail(route.params.id) // llama a getDetail para traer los datos
-        const preparedRestaurant = prepareEntityImages(fetchedRestaurant, ['logo', 'heroImage']) // Adaptar los datos de imagen
-        setRestaurant(preparedRestaurant) // Guardar restaurante en el estado
-        const initialValues = buildInitialValues(preparedRestaurant, initialRestaurantValues) // Crea valores iniciales para el formulario
-        setInitialRestaurantValues(initialValues) // Set los initial values en Formik
-      } catch (error) { // Manejo de errores
-        showMessage({
-          message: `There was an error while retrieving restaurant details (id ${route.params.id}). ${error}`,
-          type: 'error',
-          style: GlobalStyles.flashStyle,
-          titleStyle: GlobalStyles.flashTextStyle
-        })
-      }
-    }
-    fetchRestaurantDetail()
-  }, [route])
+
   useEffect(() => {
     if (loggedInUser) {
       fetchRestaurants()
@@ -176,23 +153,6 @@ export default function RestaurantsScreen({ navigation, route }) {
     }
   }
 
-  // 4. Crear función: updateRestaurant
-  const updateRestaurant = async (values) => {
-    setBackendErrors([])
-    try {
-      const updatedRestaurant = await update(restaurant.id, values)
-      showMessage({
-        message: `Restaurant ${updatedRestaurant.name} succesfully updated`,
-        type: 'success',
-        style: GlobalStyles.flashStyle,
-        titleStyle: GlobalStyles.flashTextStyle
-      })
-      navigation.navigate('RestaurantsScreen', { dirty: true })
-    } catch (error) {
-      console.log(error)
-      setBackendErrors(error.errors)
-    }
-  }
   return (
     <>
       <DeleteModal // 3. Añadir el componente DeleteModel: pide confirmación al usuario antes de eliminar el restaurante

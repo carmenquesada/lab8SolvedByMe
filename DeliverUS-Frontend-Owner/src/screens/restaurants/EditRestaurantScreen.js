@@ -20,7 +20,30 @@ export default function EditRestaurantScreen({ navigation, route }) {
   const [open, setOpen] = useState(false)
   const [restaurantCategories, setRestaurantCategories] = useState([])
   const [backendErrors, setBackendErrors] = useState()
-
+  // 1. Estado para almacenar el restaurante que sería eliminado si se pulsa el botón 'eliminar':
+  const [restaurantToBeDeleted, setRestaurantToBeDeleted] = useState(null)
+  // 2. Estado para editar el restaurante: guarda los valores que va a usar Formik como initialValues
+  const [initialRestaurantValues, setInitialRestaurantValues] = useState({ name: null, description: null, address: null, postalCode: null, url: null, shippingCosts: null, email: null, phone: null, restaurantCategoryId: null, logo: null, heroImage: null })
+  // 3. useEffect para cargar los datos:
+  useEffect(() => {
+    async function fetchRestaurantDetail () {
+      try {
+        const fetchedRestaurant = await getDetail(route.params.id) // llama a getDetail para traer los datos
+        const preparedRestaurant = prepareEntityImages(fetchedRestaurant, ['logo', 'heroImage']) // Adaptar los datos de imagen
+        setRestaurant(preparedRestaurant) // Guardar restaurante en el estado
+        const initialValues = buildInitialValues(preparedRestaurant, initialRestaurantValues) // Crea valores iniciales para el formulario
+        setInitialRestaurantValues(initialValues) // Set los initial values en Formik
+      } catch (error) { // Manejo de errores
+        showMessage({
+          message: `There was an error while retrieving restaurant details (id ${route.params.id}). ${error}`,
+          type: 'error',
+          style: GlobalStyles.flashStyle,
+          titleStyle: GlobalStyles.flashTextStyle
+        })
+      }
+    }
+    fetchRestaurantDetail()
+  }, [route])
   const validationSchema = yup.object().shape({
     name: yup
       .string()
@@ -58,7 +81,7 @@ export default function EditRestaurantScreen({ navigation, route }) {
   })
 
   useEffect(() => {
-    async function fetchRestaurantCategories() {
+    async function fetchRestaurantCategories () {
       try {
         const fetchedRestaurantCategories = await getRestaurantCategories()
         const fetchedRestaurantCategoriesReshaped = fetchedRestaurantCategories.map((e) => {
